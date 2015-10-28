@@ -60,3 +60,8 @@ h1 > span{
   font-size: 1.5em;
 }
 
+.lost {
+    color: #ff9999;
+    background: #ffbfbf;  
+}
+

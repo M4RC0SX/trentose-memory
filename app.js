@@ -16,30 +16,50 @@ var Game = {
     cardHTML : "<li id=\"NUM\" class=\"done\"><h3>NUM</h3></li> ",
     lastClicked : 0,
     totalNumber : 0,
+    lost: false,
+    playing : false,
     init : function(cards,totalNumber){
         this.lastClicked = 0;
+        this.playing = false;
+        this.lost = false;
         this.totalNumber = totalNumber;
         cards.forEach(function(element){
             var card= $.parseHTML( Game.cardHTML.replace(/NUM/g,element) );
             $(card).on("click", function(){
-                $(card).attr("class","done");
-                if(element==Game.lastClicked+1){
-                    Game.lastClicked++;
-                } else {
-                    alert("YOU LOST");
+                if(!Game.lost && Game.playing){
+                    $(card).attr("class","");
+                    $(card).toggleClass("animated flip done",function(){
+                        $(this).remove();
+                    });
+                    if(element==Game.lastClicked+1){
+                        Game.lastClicked++;
+                    } else {
+                        Game.playerLost(element);
+                        alert("YOU LOST");
+                    }
+                    if(Game.lastClicked==Game.totalNumber){
+                        alert("YOU WON");
+                    }
                 }
-                if(Game.lastClicked==Game.totalNumber){
-                    alert("YOU WON");
-                }
-            })
+            });
             $(".cards").append(card);
         });
     },
     
     start : function(){
-        $(".cards").children("li").each(function(){
-            $(this).attr("class","hidden");
-        });
+        if(!this.lost) {
+            $(".cards").children("li").each(function(){
+                $(this).attr("class","hidden");
+            });
+            this.playing = true;
+        } else {
+            location.reload(); 
+        }
+    },
+    
+    playerLost : function(card){
+        this.lost = true;
+        $(".cards #"+card).addClass("lost");
     }
 };
 
